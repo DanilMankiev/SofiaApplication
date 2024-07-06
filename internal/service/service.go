@@ -8,8 +8,8 @@ import (
 
 type Category interface {
 	CreateCategory(category entity.Category) (int, error)
-	GetAllCategorys() ([]entity.Category, error)
-	GetCategoryById(id int) (entity.Category, error)
+	GetAllCategorys() ([]entity.CategoryResult, error)
+	GetCategoryById(id int) (entity.CategoryResult, error)
 	UpdateCategory(id int, input entity.UpdateCategory) error
 	DeleteCategory(id int) error
 }
