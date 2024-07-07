@@ -19,24 +19,48 @@ func (h *Handler) NewRouter(router *gin.Engine){
 
 	auth:=router.Group("/auth")
 	{
-		auth.POST("/sign-up",h.signUp)
-		auth.POST("/sign-in",h.signIn)
+		auth.POST("/register",h.signUp)
+		auth.POST("/login",h.signIn)
 
 	}
 	api:=router.Group("/api/v1")
 	{
+		admin:=api.Group("/admin")
+		{
+			admin.POST("/login")
+			
+			category:=admin.Group("/category")
+			{
+				category.POST("/", h.createCategory)
+
+				categoryID:=category.Group("/:id")
+				{
+					categoryID.PUT("",h.updateCategory)
+					categoryID.DELETE("", h.deleteCategory)
+				}
+			}
+		}
 		category:=api.Group("/category")
 		{
-			category.POST("/", h.createCategory)
 			category.GET("/", h.getAllCategory)
 			
 			categoryID:=category.Group("/:id")
 			{
 				categoryID.GET("", h.getCategoryByID)
-				categoryID.PUT("",h.updateCategory)
-				categoryID.DELETE("", h.deleteCategory)
 			}
-		}	
+		}
+		// company:=api.Group("/company")
+		// {
+		// 	company.POST("/",h.createCompany)
+		// 	company.GET("/",h.getAllCompany)
+
+		// 	companyID:=company.Group("/id")
+		// 	{
+		// 		companyID.GET("/", h.getCompanyByID)
+		// 		companyID.PUT("/",h.updateCompany)
+		// 		companyID.DELETE("/",h.deleteCompany)
+		// 	}
+		// }	
 	}
 	
 }

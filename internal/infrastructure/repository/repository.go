@@ -7,7 +7,13 @@ import (
 
 const (
 	categoryTable="categories"
+	usersTable="users"
 )
+
+
+type Authorization interface{
+	SignUp(entity.RegiterInput) error
+}
 
 type Category interface {
 	CreateCategory(input entity.Category) (int, error)
@@ -18,10 +24,12 @@ type Category interface {
 }
 type Repository struct {
 	Category
+	Authorization
 }
 
 func New(db *sqlx.DB) *Repository{
 	return &Repository{
 		Category: newCategoryPostgres(db),
+		Authorization: newAuthorizationPostgres(db),
 	}
 }
