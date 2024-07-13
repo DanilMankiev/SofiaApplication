@@ -1,21 +1,22 @@
 package app
 
 import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/DanilMankiev/SofiaApplication/config"
 	v1 "github.com/DanilMankiev/SofiaApplication/internal/controllers/http/v1"
 	"github.com/DanilMankiev/SofiaApplication/internal/infrastructure/repository"
 	"github.com/DanilMankiev/SofiaApplication/internal/service"
 	server "github.com/DanilMankiev/SofiaApplication/pkg/httpserver"
 	"github.com/DanilMankiev/SofiaApplication/pkg/postgres"
+	"github.com/DanilMankiev/SofiaApplication/pkg/rabbitmq"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"os"
-	"syscall"
-	"context"
-	"os/signal"
-	_ "github.com/lib/pq"
 	_ "github.com/jmoiron/sqlx"
-
+	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 
@@ -36,11 +37,17 @@ func Run(cfg *config.Config){
 		logrus.Fatalf("Failed to connect database:%s",err.Error())
 	}
 	
+	// RabbitMQ
+	_,err=rabbitmq.NewRabbitMQ(cfg.RabbitMQ.Url)
+	if err!=nil{
+		logrus.Fatalf("Failed to connect rabbitmq:%s",err.Error())
+	}
+
 	//Repository
 	repo:=repository.New(pg)
 	
 	//Service
-	service:=service.New(repo)
+	service:=service.New(repo,)
 
 	//HTTP server
 	router:=gin.New()

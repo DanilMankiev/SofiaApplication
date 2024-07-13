@@ -13,6 +13,7 @@ type (
 		Http `yaml:"http"`
 		Postgres `yaml:"postgres"`
 		StaticHost `yaml:"statichost"`
+		RabbitMQ `yaml:"rabbitmq"`
 	}
 
 	Http struct{
@@ -29,21 +30,25 @@ type (
 	StaticHost struct{
 		StaticHost string `yaml:"statichost"`
 	}
+	RabbitMQ struct{
+		Url string `yaml:"rabbitMQ_url"`
+	}
 )
 
 func InitConfig() (*Config,error) {
 	cfg := &Config{}
 
-	err := cleanenv.ReadConfig("../config/config.yml", cfg)
+	err := cleanenv.ReadConfig("./config/config.yml", cfg)
 	if err != nil {
 		return nil, fmt.Errorf("config error: %w", err)
 	}
 
-	err = godotenv.Load("../.env")
+	err = godotenv.Load("./.env")
 	if err != nil {
 		return nil, err
 	}
 	cfg.Postgres.Password=os.Getenv("PG_PASSWORD")
+	cfg.RabbitMQ.Url=os.Getenv("RABBITMQ_URL")
 
 	return cfg, nil
 }
