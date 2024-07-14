@@ -52,7 +52,7 @@ func (cp *CategoryPostgres) GetAllCategorys() ([]entity.CategoryResult, error){
 
 func (cp *CategoryPostgres) GetCategoryById(id int) (entity.CategoryResult, error){
 	var  result entity.CategoryResult
-	query:=fmt.Sprintf("SELECT t1.name, t2.name,t1.id FROM %s as 1 RIGHT JOIN %s AS t2 ON t2.parentid = t1.id WHERE t1.id=$1", categoryTable,categoryTable)
+	query:=fmt.Sprintf("SELECT t1.name, t2.name,t1.id FROM %s as 1 RIGHT JOIN %s AS t2 ON t2.parentid = t1.id WHERE t1.id=$1",categoryTable,categoryTable)
 	row:=cp.db.QueryRow(query,id)
 	err:=row.Scan(&result.Parentname,&result.ChildName,&result.ID)
 	if err!=nil{
