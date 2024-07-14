@@ -11,6 +11,7 @@ import (
 	"github.com/DanilMankiev/SofiaApplication/internal/infrastructure/repository"
 	"github.com/DanilMankiev/SofiaApplication/internal/service"
 	server "github.com/DanilMankiev/SofiaApplication/pkg/httpserver"
+	"github.com/DanilMankiev/SofiaApplication/pkg/otp"
 	"github.com/DanilMankiev/SofiaApplication/pkg/postgres"
 	"github.com/DanilMankiev/SofiaApplication/pkg/rabbitmq"
 	"github.com/gin-gonic/gin"
@@ -38,16 +39,19 @@ func Run(cfg *config.Config){
 	}
 	
 	// RabbitMQ
-	_,err=rabbitmq.NewRabbitMQ(cfg.RabbitMQ.Url)
+	rabbit,err:=rabbitmq.NewRabbitMQ(cfg.RabbitMQ.Url)
 	if err!=nil{
 		logrus.Fatalf("Failed to connect rabbitmq:%s",err.Error())
 	}
+
+	//OTP
+	otpGenerator:=otp.NewOTPGenerator()
 
 	//Repository
 	repo:=repository.New(pg)
 	
 	//Service
-	service:=service.New(repo,)
+	service:=service.New(repo,rabbit,otpGenerator,cfg.Authorization.VerificationCodeLength)
 
 	//HTTP server
 	router:=gin.New()

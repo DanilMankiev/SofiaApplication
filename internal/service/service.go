@@ -3,8 +3,8 @@ package service
 import (
 	"github.com/DanilMankiev/SofiaApplication/internal/entity"
 	"github.com/DanilMankiev/SofiaApplication/internal/infrastructure/repository"
-	"github.com/DanilMankiev/SofiaApplication/internal/service/notification"
-	"github.com/DanilMankiev/SofiaApplication/internal/service/pap"
+	"github.com/DanilMankiev/SofiaApplication/pkg/otp"
+	"github.com/DanilMankiev/SofiaApplication/pkg/rabbitmq"
 )
 
 
@@ -16,31 +16,29 @@ type Category interface {
 	DeleteCategory(id int) error
 }
 
-type Notification interface {
-	Get() error
+type Email interface {
+	
 }
 
-type Pa interface{
-	Get() error
+type SMS interface{
+
 }
 
 type Authorization interface{
-	SignUp(entity.RegiterInput) error
+	Register(entity.RegiterInput) error
 }
 
 type Service struct {
 	Category
 	Authorization
-	Notification
-	Pa
+	Email
+
 }
 
-
-func New(repo *repository.Repository) *Service {
+func New(repo *repository.Repository, msgBroker *rabbitmq.Rabbitmq, otp otp.CodeGenerator, verificationLength int) *Service {
 	return &Service{
 		Category: newCategoryService(repo.Category),
-		Authorization: newAuthorizationService(repo.Authorization),
-		Notification: notification.NewNoti(),
-		Pa: pa.NewNoti(),
+		Authorization: newAuthorizationService(repo.Authorization,otp,verificationLength),
+		Email: newEmailService(msgBroker),
 	}
 }

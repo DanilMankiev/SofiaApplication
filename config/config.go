@@ -14,6 +14,7 @@ type (
 		Postgres `yaml:"postgres"`
 		StaticHost `yaml:"statichost"`
 		RabbitMQ `yaml:"rabbitmq"`
+		Authorization `yaml:"authorization"`
 	}
 
 	Http struct{
@@ -32,6 +33,9 @@ type (
 	}
 	RabbitMQ struct{
 		Url string `yaml:"rabbitMQ_url"`
+	}
+	Authorization struct{
+		VerificationCodeLength int `yaml:"verification_code_length"`
 	}
 )
 
