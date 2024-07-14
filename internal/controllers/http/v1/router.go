@@ -19,7 +19,7 @@ func (h *Handler) NewRouter(router *gin.Engine){
 
 	auth:=router.Group("/auth")
 	{
-		auth.POST("/register",h.signUp)
+		auth.POST("/register",h.Register)
 		auth.POST("/login",h.signIn)
 
 	}

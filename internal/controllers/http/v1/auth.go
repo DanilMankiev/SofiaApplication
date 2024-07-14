@@ -6,15 +6,15 @@ import (
 	"net/http"
 )
 
-func (h *Handler) signUp(c *gin.Context){
+func (h *Handler) Register(c *gin.Context){
 	var input entity.RegiterInput
 
 	if err:=c.BindJSON(&input);err!=nil{
 		newResponse(c,http.StatusBadRequest,err.Error())
 		return
 	}
-
-	err:=h.services.Authorization.SignUp(input)
+	
+	err:=h.services.Authorization.Register(input)
 	if err!=nil{
 		newResponse(c, http.StatusInternalServerError,err.Error())
 		return
