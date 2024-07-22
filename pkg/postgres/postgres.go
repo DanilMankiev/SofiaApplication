@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/DanilMankiev/SofiaApplication/pkg/rabbitmq"
+	
 	"github.com/jmoiron/sqlx"
 )
 
