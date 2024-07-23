@@ -14,6 +14,8 @@ const (
 
 type Authorization interface{
 	Register(entity.RegiterInput) error
+	SendCodeEmail(email string, code string) error
+	SendCodeSMS(phone string, code string) error
 }
 
 type Category interface {

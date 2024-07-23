@@ -40,14 +40,12 @@ func(h *Handler) sendCodeEmail(c *gin.Context){
 	c.JSON(http.StatusOK, StatusResponse{
 		Status: "Sent",
 	})	
-	
-
 }
 
 func(h *Handler) sendCodeSMS(c *gin.Context){
 	var phone string
 
-	err:=h.services.Authorization.SendCodeSms(phone)
+	err:=h.services.Authorization.SendCodeSMS(phone)
 	if err!=nil{
 		newResponse(c, http.StatusInternalServerError,err.Error())
 		return

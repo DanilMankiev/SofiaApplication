@@ -32,7 +32,7 @@ type (
 		StaticHost string `yaml:"statichost"`
 	}
 	RabbitMQ struct{
-		Url string `yaml:"rabbitMQ_url"`
+		Url string `yaml:"rabbitmq_url"`
 	}
 	Authorization struct{
 		VerificationCodeLength int `yaml:"verification_code_length"`

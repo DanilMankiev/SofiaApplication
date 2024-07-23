@@ -45,11 +45,29 @@ func (au *AuthorizationPostgres) Register(input entity.RegiterInput) error {
 		}
 	} else {
 
-		query = fmt.Sprintf("INSERT INTO %s (id,name,phone,email) VALUES($1,$2,$3,$3)", usersTmpTable)
-		_, err := au.db.Exec(query, uid, input.Name, input.Phone, input.Email)
+		query = fmt.Sprintf("INSERT INTO %s (id,name,phone,email,birthdate) VALUES($1,$2,$3,$4,$5)", usersTmpTable)
+		_, err := au.db.Exec(query, uid, input.Name, input.Phone, input.Email,input.Birthdate)
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (au *AuthorizationPostgres) SendCodeEmail(email string, code string) error{
+	query:=fmt.Sprintf("UPDATE %s SET code=$1 WHERE email=$1",usersTmpTable)
+	_, err:= au.db.Exec(query,code,email)
+	if err!=nil{
+		return err
+	}
+	return nil
+}
+
+func (au *AuthorizationPostgres) SendCodeSMS(phone string, code string) error{
+	query:=fmt.Sprintf("UPDATE %s SET code=$1 WHERE phone=$1",usersTmpTable)
+	_, err:= au.db.Exec(query,code,phone)
+	if err!=nil{
+		return err
 	}
 	return nil
 }

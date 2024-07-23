@@ -83,12 +83,15 @@ func Run(cfg *config.Config){
 	if err := pg.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
+	if err:= rabbit.Close();err!=nil{
+		logrus.Errorf("error occured on rabbitma connection close: %s", err.Error())
+	}
 }
 
 func setUpRabbitmq(cfg *rabbitmq.Config){
 	exchande:= rabbitmq.Exchange{
 		"notification",
-		"direct",
+		"topic",
 		true,
 		false,
 		false,

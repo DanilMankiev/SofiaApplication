@@ -28,7 +28,7 @@ func (client *Client) Publish(exchange, routingKey string, mandatory, immediate 
 		return err
 	}
 	
-	ctx,cancel := context.WithTimeout(context.Background(), publishTimeout)
+	ctx,cancel := context.WithTimeout(context.Background(),publishTimeout)
 	defer cancel()
 
 	for {
@@ -50,6 +50,7 @@ func (client *Client) Publish(exchange, routingKey string, mandatory, immediate 
 			case <-time.After(republishDelay):
 			case <-ctx.Done():
 				client.logger.Errorf("Timeout publishing")
+				
 				return errTimeoutPublishing
 			}
 			continue

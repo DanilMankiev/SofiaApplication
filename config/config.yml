@@ -10,3 +10,6 @@ postgres:
 
 statichost:
   statichost: ""
+
+Authorization:
+  verification_code_length: 4
