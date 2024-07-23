@@ -8,11 +8,12 @@ import (
 const (
 	categoryTable="categories"
 	usersTable="users"
+	usersTmpTable="users_tmp"
 )
 
 
 type Authorization interface{
-	SignUp(entity.RegiterInput) error
+	Register(entity.RegiterInput) error
 }
 
 type Category interface {

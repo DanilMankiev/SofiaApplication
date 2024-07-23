@@ -6,13 +6,13 @@ import (
 )
 
 type EmailService struct {
-	msgBroker *rabbitmq.Rabbitmq
+	clientBroker *rabbitmq.Client
 	
 }
 
-func newEmailService(msgBroker *rabbitmq.Rabbitmq) *EmailService {
+func newEmailService(clientBroker *rabbitmq.Client) *EmailService {
 	return &EmailService{
-		msgBroker: msgBroker,
+		clientBroker: clientBroker,
 	}
 }
 

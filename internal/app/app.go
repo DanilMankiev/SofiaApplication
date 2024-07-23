@@ -39,10 +39,11 @@ func Run(cfg *config.Config){
 	}
 	
 	// RabbitMQ
-	rabbit,err:=rabbitmq.NewRabbitMQ(cfg.RabbitMQ.Url)
-	if err!=nil{
-		logrus.Fatalf("Failed to connect rabbitmq:%s",err.Error())
-	}
+
+	cfg_rabbit:= rabbitmq.Config{}
+	setUpRabbitmq(&cfg_rabbit)
+
+	rabbit:=rabbitmq.New(cfg.RabbitMQ.Url,logrus.New(),&cfg_rabbit)
 
 	//OTP
 	otpGenerator:=otp.NewOTPGenerator()
@@ -83,3 +84,48 @@ func Run(cfg *config.Config){
 		logrus.Errorf("error occured on db connection close: %s", err.Error())
 	}
 }
+
+func setUpRabbitmq(cfg *rabbitmq.Config){
+	exchande:= rabbitmq.Exchange{
+		"notification",
+		"direct",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	}
+	queue_email:=rabbitmq.Queue{
+		"email",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	}
+	queue_sms:=rabbitmq.Queue{
+		"sms",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	}
+	bindings_email:= rabbitmq.Binding{
+		"notification",
+		"email",
+		"email",
+		false,
+		nil,
+	}
+	bindings_sms:= rabbitmq.Binding{
+		"notification",
+		"sms",
+		"sms",
+		false,
+		nil,
+	}
+	cfg.Exchanges = append(cfg.Exchanges, exchande)
+	cfg.Queues = append(cfg.Queues, queue_email,queue_sms)
+	cfg.Bindings = append(cfg.Bindings,bindings_email, bindings_sms)
+}	

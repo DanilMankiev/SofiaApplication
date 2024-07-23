@@ -162,3 +162,23 @@ func (client *Client) init(connection *amqp091.Connection) error{
 	client.logger.Infof("Setup complete")
 	return nil
 	}
+
+	func (client *Client) Close() error{
+		client.m.Lock()
+		defer client.m.Unlock()
+	
+		if !client.isReady{
+			return errAlreadyClose
+		}
+	
+		close(client.done)
+		if err:=client.channel.Close();err!=nil{
+			return err
+		}
+		if err:=client.connection.Close();err!=nil{
+			return err
+		}
+	
+		client.isReady=false
+		return nil
+	}

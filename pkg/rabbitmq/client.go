@@ -13,7 +13,7 @@ const (
 	republishDelay = time.Second*5 
 )
 
-func (client *Client) publishWithoutAck(ctx context.Context, exchange, routingKey string, mandatory, immediate bool, body []byte) error{
+func (client *Client) Publish(exchange, routingKey string, mandatory, immediate bool, body []byte) error{
 	client.m.Lock()
 	if !client.isReady{
 		client.m.Unlock()
@@ -28,19 +28,32 @@ func (client *Client) publishWithoutAck(ctx context.Context, exchange, routingKe
 		return err
 	}
 	
-	ctx,cancel := context.WithTimeout(ctx, publishTimeout)
+	ctx,cancel := context.WithTimeout(context.Background(), publishTimeout)
 	defer cancel()
 
-
-	return client.channel.PublishWithContext(
-		ctx,
-		exchange,
-		routingKey,
-		mandatory,
-		immediate,
-		amqp091.Publishing{
-			ContentType: "application/json",
-			Body: data,
-		},
-	)
+	for {
+		err:=client.channel.PublishWithContext(
+			ctx,
+			exchange,
+			routingKey,
+			mandatory,
+			immediate,
+			amqp091.Publishing{
+				ContentType: "application/json",
+				Body: data,
+			},
+		)
+		if err!=nil{
+			client.logger.Errorf("Failed to publish: %s. Republishing...",err.Error())
+			
+			select{
+			case <-time.After(republishDelay):
+			case <-ctx.Done():
+				client.logger.Errorf("Timeout publishing")
+				return errTimeoutPublishing
+			}
+			continue
+		}
+		return nil	
+	}
 }

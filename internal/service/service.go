@@ -26,6 +26,8 @@ type SMS interface{
 
 type Authorization interface{
 	Register(entity.RegiterInput) error
+	SendCodeEmail(email string) error
+	SendCodeSMS(phone string) error
 }
 
 type Service struct {
@@ -35,10 +37,9 @@ type Service struct {
 
 }
 
-func New(repo *repository.Repository, msgBroker *rabbitmq.Rabbitmq, otp otp.CodeGenerator, verificationLength int) *Service {
+func New(repo *repository.Repository, msgBroker *rabbitmq.Client, otp otp.CodeGenerator, verificationLength int) *Service {
 	return &Service{
 		Category: newCategoryService(repo.Category),
-		Authorization: newAuthorizationService(repo.Authorization,otp,verificationLength),
-		Email: newEmailService(msgBroker),
+		Authorization: newAuthorizationService(repo.Authorization,msgBroker,otp,verificationLength),
 	}
 }
