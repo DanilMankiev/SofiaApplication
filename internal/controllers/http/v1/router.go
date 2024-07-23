@@ -19,7 +19,9 @@ func (h *Handler) NewRouter(router *gin.Engine){
 
 	auth:=router.Group("/auth")
 	{
-		auth.POST("/register",h.Register)
+		auth.POST("/register",h.register)
+		auth.POST("/code-email",h.sendCodeEmail)
+		auth.POST("/code-sms", h.sendCodeSMS)
 		auth.POST("/login",h.signIn)
 
 	}
